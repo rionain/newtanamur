@@ -1,0 +1,126 @@
+{
+    "info": {
+        "name": "Tanamur GPS API Verification",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. Generate Hex for Admin Login",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "var jsonData = pm.response.json();",
+                            "pm.test('Should return hex', function () {",
+                            "    pm.expect(jsonData.hex).to.be.a('string');",
+                            "    pm.collectionVariables.set('LOGIN_HEX', jsonData.hex);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/debug/encode?plain={\"u\":\"admin\",\"p\":\"admin123\"}",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "debug",
+                        "encode"
+                    ],
+                    "query": [
+                        {
+                            "key": "plain",
+                            "value": "{\"u\":\"admin\",\"p\":\"admin123\"}"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "2. Verify Login Endpoint",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "var jsonData = pm.response.json();",
+                            "pm.test('Status is 200', function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "pm.test('Response contains res', function () {",
+                            "    pm.expect(jsonData.res).to.include('_0');",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/logon?req={{LOGIN_HEX}}",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "logon"
+                    ],
+                    "query": [
+                        {
+                            "key": "req",
+                            "value": "{{LOGIN_HEX}}"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "3. Verify LastPos Tracking",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/lastpos?req=_0218{\"cid\":1,\"last\":0}",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "lastpos"
+                    ],
+                    "query": [
+                        {
+                            "key": "req",
+                            "value": "_0218{\"cid\":1,\"last\":0}"
+                        }
+                    ]
+                },
+                "description": "Using a raw mock hex string for quick validation"
+            },
+            "response": []
+        }
+    ],
+    "variable": [
+        {
+            "key": "LOGIN_HEX",
+            "value": ""
+        }
+    ]
+}
