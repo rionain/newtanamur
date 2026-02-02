@@ -1,0 +1,4 @@
+CREATE DATABASE IF NOT EXISTS gps;
+CREATE USER IF NOT EXISTS 'tanamur'@'localhost' IDENTIFIED BY 'Tanamur@2026!';
+GRANT ALL PRIVILEGES ON gps.* TO 'tanamur'@'localhost';
+FLUSH PRIVILEGES;
